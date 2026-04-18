@@ -4,179 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alchemist's Grimoire - Portal</title>
-    <style>
-        /* --- CSS Styling (Thematic) --- */
-        :root {
-            --dark-paper: #3a3232;
-            --parchment: #f0e6c8;
-            --gold: #daa520;
-            --blood-red: #03b541;
-            --ink: #1e1e1e;
-            --taken-color: #38a169; /* Green for Taken */
-            --missed-color: #e53e3e; /* Red for Missed */
-        }
-
-        /* General Styling */
-        body {
-            font-family: 'Georgia', serif;
-            background-color: var(--ink);
-            color: var(--parchment);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><text x="50" y="50" font-size="20" font-family="serif" fill="%23f0e6c8" text-anchor="middle" dominant-baseline="central">⚗</text></svg>');
-            background-repeat: repeat;
-            background-size: 50px;
-        }
-
-        .grimoire-container {
-            background-color: var(--dark-paper);
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7), 0 0 50px var(--gold);
-            width: 350px;
-            border: 2px solid var(--gold);
-            position: relative;
-            transition: all 0.5s ease-in-out;
-            min-height: 400px; /* Base size */
-        }
-        
-        /* Dashboard size - Adjusting for the content */
-        #medicine-dashboard.active {
-            width: 90%; 
-            max-width: 1200px;
-            min-height: 600px;
-        }
-
-        h2 {
-            text-align: center;
-            color: var(--gold);
-            text-shadow: 1px 1px 2px var(--blood-red);
-            margin-bottom: 30px;
-            font-size: 1.8em;
-            letter-spacing: 1px;
-        }
-
-        /* --- Input/Form Styles --- */
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 5px; color: var(--parchment); }
-        input[type="text"], input[type="password"], input[type="date"], input[type="number"], select, input[type="time"] { /* Added input[type="time"] */
-            width: 100%; padding: 10px; border: 1px solid var(--gold); border-radius: 4px;
-            background-color: var(--ink); color: var(--parchment); box-sizing: border-box; font-size: 1em;
-        }
-        input[type="file"] { border: none; padding: 0; }
-        
-        /* --- Buttons --- */
-        .action-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
-        button { padding: 10px; border: 2px solid var(--gold); border-radius: 4px; font-size: 1em; cursor: pointer; transition: background-color 0.3s, color 0.3s; }
-        .btn-primary { background-color: var(--gold); color: var(--dark-paper); font-weight: bold; }
-        .btn-primary:hover { background-color: var(--parchment); color: var(--blood-red); }
-        .btn-secondary { background-color: transparent; color: var(--gold); border-color: var(--gold); }
-        .btn-secondary:hover { background-color: var(--gold); color: var(--dark-paper); }
-        .btn-link { color: var(--gold); background: none; border: none; padding: 0; text-decoration: underline; cursor: pointer; }
-        .utility-links { display: flex; justify-content: flex-end; align-items: center; margin-top: 15px; font-size: 0.9em; }
-        .error-message { color: var(--blood-red); font-size: 0.9em; margin-top: 10px; font-weight: bold; }
-
-        /* --- View Management --- */
-        #signup-form, #login-form, #reset-form, #medicine-dashboard { display: none; }
-        #login-form.active, #signup-form.active, #reset-form.active, #medicine-dashboard.active { display: block; }
-
-        /* --- Dashboard Specific Styles --- */
-        .dashboard-content { 
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px; 
-            padding: 10px;
-        }
-        
-        /* Tab Pane layout for smaller screens */
-        #tab-details.active { grid-column: 1 / 3; }
-        #tab-reminder.active { grid-column: 1 / 3; }
-        #tab-taken.active, #tab-missed.active { display: block; grid-column: span 1; }
-        #tab-chart.active { grid-column: 1 / 3; }
-
-
-        .dashboard-tabs { 
-            display: flex; justify-content: space-between; margin-bottom: 20px;
-            border-bottom: 2px solid var(--gold);
-        }
-        .tab-button {
-            flex-grow: 1; padding: 15px 10px; background-color: var(--ink); border: none;
-            border-radius: 0; color: var(--parchment); opacity: 0.6; transition: opacity 0.3s;
-            font-weight: bold;
-        }
-        .tab-button.active, .tab-button:hover { opacity: 1; color: var(--gold); border-bottom: 3px solid var(--gold); }
-        .tab-pane { display: none; padding: 15px; border-radius: 4px; border: 1px solid var(--dark-paper); }
-        .tab-pane.active { display: block; }
-
-        /* --- Pill List and Reminder Styles --- */
-        .pill-item, .log-item {
-            background-color: var(--ink); padding: 15px; border: 1px solid var(--gold);
-            border-radius: 5px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .pill-details { flex-grow: 1; min-width: 250px; }
-        .pill-details strong { color: var(--gold); font-size: 1.1em; }
-        .pill-details span { display: block; font-size: 0.9em; }
-        .item-actions button {
-            padding: 5px 10px; margin-left: 5px; font-size: 0.8em; border-width: 1px;
-        }
-        .reminder-time { color: var(--blood-red); font-weight: bold; }
-        .log-taken { border-left: 5px solid var(--taken-color); }
-        .log-missed { border-left: 5px solid var(--missed-color); }
-
-        /* Edit view management */
-        .edit-active .add-pill-section, .edit-active .pills-list-section { display: none; }
-        .add-pill-section { border-bottom: 1px solid var(--gold); padding-bottom: 20px; margin-bottom: 20px; }
-
-        /* Reminder Popup: CSS for the popup overlay is now unnecessary but kept for general 'popup-overlay' class cleanup */
-        .popup-overlay { display: none !important; } 
-
-        /* Chart specific styles */
-        .chart-container {
-            padding: 20px;
-            text-align: center;
-        }
-        .chart-bar-container {
-            width: 100%;
-            height: 40px;
-            background-color: var(--dark-paper);
-            border: 1px solid var(--parchment);
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 20px 0;
-            display: flex;
-        }
-        .chart-taken { background-color: var(--taken-color); }
-        .chart-missed { background-color: var(--missed-color); }
-        .chart-taken, .chart-missed {
-            height: 100%;
-            transition: width 1s ease;
-        }
-        .chart-stats {
-            display: flex; justify-content: space-around;
-            font-size: 1.1em;
-        }
-
-        /* Media Query for Dashboard Responsiveness */
-        @media (max-width: 768px) {
-            .grimoire-container {
-                width: 95%;
-                padding: 20px;
-            }
-            #medicine-dashboard.active {
-                width: 95%;
-            }
-            .dashboard-content {
-                grid-template-columns: 1fr;
-            }
-            #tab-details.active, #tab-reminder.active, #tab-taken.active, #tab-missed.active, #tab-chart.active { 
-                grid-column: 1 / 2; 
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -225,25 +53,15 @@
                 <input type="password" id="signup-password" required>
             </div>
 
-            <div class="form-group">
-                <label for="signup-contact">Contact Number or Email (Optional):</label>
-                <input type="text" id="signup-contact" placeholder="Email or Phone Number">
-            </div>
+             <div class="form-group">
+    <label for="signup-email">Email Address *:</label>
+    <input type="email" id="signup-email" required>
+</div>
 
-            <div class="form-group">
-                <label for="signup-edu">Basic Education Details (Optional):</label>
-                <input type="text" id="signup-edu">
-            </div>
-
-            <div class="form-group">
-                <label for="signup-dob">Date of Birth (Optional):</label>
-                <input type="date" id="signup-dob">
-            </div>
-
-            <div class="form-group">
-                <label for="signup-photo">Profile Photo (Optional):</label>
-                <input type="file" id="signup-photo" accept="image/*">
-            </div>
+<div class="form-group">
+    <label for="signup-phone">Phone Number *:</label>
+    <input type="text" id="signup-phone" required>
+</div>
 
             <div class="action-buttons">
                 <button type="submit" class="btn-primary">Create Account</button>
@@ -294,8 +112,37 @@
                                 <input type="text" id="pill-dosage" required>
                             </div>
                             <div class="form-group">
-                                <label for="pill-time">First Dose Time (AM/PM) *:</label>
-                                <input type="time" id="pill-time" placeholder="08:00" required>
+                                <label>First Dose Time * (7 AM - 12 AM):</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <select id="pill-hour" required style="flex: 1;">
+                                        <option value="">Hour</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                    <span style="color: var(--parchment);">:</span>
+                                    <select id="pill-minute" required style="flex: 1;">
+                                        <option value="">Min</option>
+                                        <option value="00">00</option>
+                                        <option value="15">15</option>
+                                        <option value="30">30</option>
+                                        <option value="45">45</option>
+                                    </select>
+                                    <select id="pill-period" required style="flex: 1;">
+                                        <option value="">AM/PM</option>
+                                        <option value="AM">AM</option>
+                                        <option value="PM">PM</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="pill-frequency">Doses Per Day *:</label>
@@ -317,8 +164,37 @@
                             <input type="text" id="edit-pill-dosage" required>
                         </div>
                         <div class="form-group">
-                            <label for="edit-pill-time">First Dose Time (AM/PM) *:</label>
-                            <input type="time" id="edit-pill-time" required>
+                            <label>First Dose Time * (7 AM - 12 AM):</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select id="edit-pill-hour" required style="flex: 1;">
+                                    <option value="">Hour</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                                <span style="color: var(--parchment);">:</span>
+                                <select id="edit-pill-minute" required style="flex: 1;">
+                                    <option value="">Min</option>
+                                    <option value="00">00</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                </select>
+                                <select id="edit-pill-period" required style="flex: 1;">
+                                    <option value="">AM/PM</option>
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="edit-pill-frequency">Doses Per Day *:</label>
@@ -383,558 +259,20 @@
 
     </div>
 
-    <script>
-        // --- Global Selectors and Constants ---
-        const mainContainer = document.getElementById('main-container');
-        const loginForm = document.getElementById('login-form');
-        const signupForm = document.getElementById('signup-form');
-        const resetForm = document.getElementById('reset-form');
-        const dashboard = document.getElementById('medicine-dashboard');
-        const editPillForm = document.getElementById('edit-pill-form');
-        const pillDetailsTab = document.getElementById('tab-details');
-        
-        const showSignupBtn = document.getElementById('show-signup');
-        const showLoginBtn = document.getElementById('show-login');
-        const showResetBtn = document.getElementById('show-reset');
-        const showLoginFromResetBtn = document.getElementById('show-login-from-reset');
-        const logoutBtn = document.getElementById('logout-btn');
-        const cancelEditBtn = document.getElementById('cancel-edit-btn');
-        
-        // Reminder Pop-up variables removed
-        
-        const loginError = document.getElementById('login-error');
-        const signupError = document.getElementById('signup-error');
-        const resetError = document.getElementById('reset-error');
-        
-        let reminderInterval;
+    <!-- Notification Overlay -->
+    <div class="notification-overlay" id="notification-overlay">
+        <div class="notification-box">
+            <h3>⏰ Dose Reminder!</h3>
+            <p class="dose-info">It's time to take your medicine</p>
+            <p class="medicine-name" id="notification-medicine-name">Medicine Name</p>
+            <p class="dose-info" id="notification-dose-info">Dosage info</p>
+            <div class="notification-buttons">
+                <button type="button" class="btn-taken" id="btn-notification-taken">✓ Yes, I took it</button>
+                <button type="button" class="btn-later" id="btn-notification-later">Later / Missed</button>
+            </div>
+        </div>
+    </div>
 
-        // --- Utility Functions ---
-
-        function getPills() {
-            try {
-                return JSON.parse(localStorage.getItem('alchemistPills')) || [];
-            } catch (e) {
-                console.error("Error loading pills from storage:", e);
-                return [];
-            }
-        }
-
-        function savePills(pills) {
-            localStorage.setItem('alchemistPills', JSON.stringify(pills));
-        }
-        
-        function generateUniqueId() {
-            return Date.now().toString(36) + Math.random().toString(36).substring(2);
-        }
-
-        /**
-         * Converts a 24-hour time string (HH:MM) to 12-hour format (h:mm AM/PM).
-         * This function is the reason the display already showed 12-hour time.
-         */
-        function formatTime12h(time24) {
-            const [hours, minutes] = time24.split(':').map(Number);
-            const period = hours >= 12 ? 'PM' : 'AM';
-            const h = hours % 12 || 12; // Convert 0 to 12
-            const m = String(minutes).padStart(2, '0');
-            return `${h}:${m} ${period}`;
-        }
-        
-        /**
-         * Calculates the specific time for a given dose slot (index) based on first dose time and frequency.
-         * This still relies on 24-hour HH:MM format, which the <input type="time"> provides to JS.
-         */
-        function calculateDoseTime(startTime, dosesPerDay, doseIndex) {
-            const [startHour, startMinute] = startTime.split(':').map(Number);
-
-            if (dosesPerDay <= 1) {
-                return startTime;
-            }
-
-            // Calculate the interval in minutes between doses
-            const intervalMinutesFloat = (12 * 60) / dosesPerDay;
-            const intervalMinutes = Math.round(intervalMinutesFloat);
-
-            // Calculate the total minutes offset from the start time
-            let offsetMinutes = doseIndex * intervalMinutes;
-
-            // Start time in minutes from midnight
-            let currentMinutes = startHour * 60 + startMinute;
-
-            // Add the offset
-            currentMinutes = currentMinutes + offsetMinutes;
-            
-            // Normalize back to 24-hour cycle
-            let finalHour = Math.floor(currentMinutes / 60) % 24;
-            let finalMinute = currentMinutes % 60;
-            
-            // Format back to HH:MM string
-            return `${String(finalHour).padStart(2, '0')}:${String(finalMinute).padStart(2, '0')}`;
-        }
-
-
-        // --- Core UI Logic ---
-
-        function switchView(view) {
-            loginForm.classList.remove('active');
-            signupForm.classList.remove('active');
-            resetForm.classList.remove('active');
-            dashboard.classList.remove('active');
-            mainContainer.style.width = '350px'; // Reset width
-
-            let title = "Alchemist's Grimoire";
-
-            if (view === 'signup') {
-                signupForm.classList.add('active');
-                title = "Create Your Grimoire";
-            } else if (view === 'reset') {
-                resetForm.classList.add('active');
-                title = "Recover The Formula";
-            } else if (view === 'dashboard') {
-                dashboard.classList.add('active');
-                mainContainer.style.width = '90%'; // Set dashboard width
-                mainContainer.style.maxWidth = '1200px';
-                title = "Medicine Dashboard";
-                // Render the dashboard content and tabs
-                renderDashboardContent(document.querySelector('.tab-button.active')?.dataset.tab || 'details'); 
-                startReminderCheck(); // START checking reminders when logged in
-            } else { // 'login'
-                loginForm.classList.add('active');
-                title = "Alchemist's Grimoire";
-                stopReminderCheck(); // STOP checking reminders when logged out
-            }
-            document.querySelector('.grimoire-container h2').textContent = title;
-        }
-
-        function startReminderCheck() {
-            if (reminderInterval) clearInterval(reminderInterval);
-            // Check reminders every 10 seconds (for demo purposes)
-            reminderInterval = setInterval(checkReminders, 10000); 
-            checkReminders(); // Run once immediately
-        }
-
-        function stopReminderCheck() {
-            if (reminderInterval) clearInterval(reminderInterval);
-        }
-
-        // --- Dashboard Tab Logic ---
-
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const tabId = e.target.dataset.tab;
-                renderDashboardContent(tabId);
-            });
-        });
-
-        function renderDashboardContent(tabId) {
-            // Update Tab buttons
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.tab-button[data-tab="${tabId}"]`).classList.add('active');
-
-            // Update Tab panes
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            
-            // Render specific content
-            if (tabId === 'details') renderPillDetails();
-            if (tabId === 'reminder') renderReminderList();
-            if (tabId === 'taken') renderLogList('taken');
-            if (tabId === 'missed') renderLogList('missed');
-            if (tabId === 'chart') renderChart();
-        }
-
-        // --- Pill Details Rendering and Management (CRUD) ---
-
-        function renderPillDetails() {
-            editPillForm.style.display = 'none';
-            pillDetailsTab.classList.remove('edit-active');
-
-            const pillsListElement = document.getElementById('pills-list');
-            const pills = getPills();
-            
-            if (pills.length === 0) {
-                pillsListElement.innerHTML = '<p>No pills added yet. Use the form above.</p>';
-                return;
-            }
-
-            pillsListElement.innerHTML = pills.map(pill => `
-                <div class="pill-item" data-id="${pill.id}">
-                    <div class="pill-details">
-                        <strong>${pill.name}</strong>
-                        <span>Dosage: ${pill.dosage}</span>
-                        <span>Doses Per Day: ${pill.frequency}</span>
-                        <span>First Dose Time: ${formatTime12h(pill.time)} (${pill.time})</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-primary btn-edit" data-id="${pill.id}">Edit</button>
-                        <button class="btn-secondary btn-delete" data-id="${pill.id}">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-
-            pillsListElement.querySelectorAll('.btn-delete').forEach(button => {
-                button.addEventListener('click', handleDeletePill);
-            });
-            pillsListElement.querySelectorAll('.btn-edit').forEach(button => {
-                button.addEventListener('click', handleEditPill);
-            });
-        }
-
-        function handleDeletePill(e) {
-            const pillId = e.target.dataset.id;
-            if (confirm("Are you sure you want to delete this pill? All log history will be removed.")) {
-                let pills = getPills();
-                pills = pills.filter(p => p.id !== pillId);
-                savePills(pills);
-                renderDashboardContent('details'); // Re-render the details tab
-            }
-        }
-        
-        function handleEditPill(e) {
-            const pillId = e.target.dataset.id;
-            const pills = getPills();
-            const pillToEdit = pills.find(p => p.id === pillId);
-
-            if (pillToEdit) {
-                document.getElementById('edit-pill-id').value = pillToEdit.id;
-                document.getElementById('edit-pill-name').value = pillToEdit.name;
-                document.getElementById('edit-pill-dosage').value = pillToEdit.dosage;
-                // Since the input type is now "time", we just set the stored HH:MM value
-                document.getElementById('edit-pill-time').value = pillToEdit.time;
-                document.getElementById('edit-pill-frequency').value = pillToEdit.frequency;
-
-                editPillForm.style.display = 'block';
-                pillDetailsTab.classList.add('edit-active');
-            }
-        }
-
-        function saveEditedPill(e) {
-            e.preventDefault();
-            const pillId = document.getElementById('edit-pill-id').value;
-            const name = document.getElementById('edit-pill-name').value;
-            const dosage = document.getElementById('edit-pill-dosage').value;
-            // The input type="time" returns a 24-hour string (HH:MM), which is what we need to store.
-            const time = document.getElementById('edit-pill-time').value;
-            const frequency = parseInt(document.getElementById('edit-pill-frequency').value);
-
-            let pills = getPills();
-            const pillIndex = pills.findIndex(p => p.id === pillId);
-
-            if (pillIndex > -1) {
-                pills[pillIndex].name = name;
-                pills[pillIndex].dosage = dosage;
-                pills[pillIndex].time = time;
-                pills[pillIndex].frequency = frequency;
-
-                savePills(pills);
-                alert(`Pill "${name}" details saved!`);
-                
-                renderDashboardContent('details'); // Re-render the details tab
-                checkReminders(); // Update reminder state
-            } else {
-                alert("Error: Pill not found.");
-            }
-        }
-        
-        // Add Pill Handler
-        document.getElementById('add-pill-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('pill-name').value;
-            const dosage = document.getElementById('pill-dosage').value;
-            // The input type="time" returns a 24-hour string (HH:MM), which is what we need to store.
-            const time = document.getElementById('pill-time').value;
-            const frequency = document.getElementById('pill-frequency').value;
-            
-            let pills = getPills();
-            
-            const newPill = {
-                id: generateUniqueId(),
-                name,
-                dosage,
-                time,
-                frequency: parseInt(frequency),
-                log: []
-            };
-
-            pills.push(newPill);
-            savePills(pills);
-            
-            e.target.reset();
-            renderDashboardContent('details');
-        });
-
-
-        // --- Log (Taken/Missed) Rendering ---
-        
-        function renderLogList(type) {
-            const listElement = document.getElementById(`${type}-list`);
-            const pills = getPills();
-            let logItems = [];
-
-            pills.forEach(pill => {
-                // Filter log entries that match the log type
-                const doses = (pill.log || []).filter(dose => dose.status === type);
-                
-                doses.forEach(dose => {
-                    logItems.push({
-                        name: pill.name,
-                        dosage: pill.dosage,
-                        time: calculateDoseTime(pill.time, pill.frequency, dose.doseIndex),
-                        date: dose.date,
-                        status: dose.status,
-                        doseIndex: dose.doseIndex
-                    });
-                });
-            });
-            
-            if (logItems.length === 0) {
-                listElement.innerHTML = `<p>No doses marked as ${type}.</p>`;
-                return;
-            }
-            // Sort by date then time (newest first)
-            logItems.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
-            
-            listElement.innerHTML = logItems.map(item => `
-                <div class="log-item log-${type}">
-                    <div class="pill-details">
-                        <strong>${item.name} (Dose #${item.doseIndex + 1})</strong>
-                        <span>Dosage: ${item.dosage}</span>
-                        <span>Logged: ${item.date} at ${formatTime12h(item.time)}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // --- Chart Rendering ---
-
-        function renderChart() {
-            const pills = getPills();
-            let takenCount = 0;
-            let missedCount = 0;
-            
-            pills.forEach(pill => {
-                (pill.log || []).forEach(log => {
-                    if (log.status === 'taken') takenCount++;
-                    if (log.status === 'missed') missedCount++;
-                });
-            });
-
-            const totalCount = takenCount + missedCount;
-            const takenPercent = totalCount > 0 ? (takenCount / totalCount) * 100 : 0;
-            const missedPercent = totalCount > 0 ? (missedCount / totalCount) * 100 : 0;
-            
-            const totalDosesMessage = `Total Doses Tracked: ${totalCount}`;
-
-            document.getElementById('chart-total').textContent = totalDosesMessage;
-            document.getElementById('taken-count').textContent = takenCount;
-            document.getElementById('missed-count').textContent = missedCount;
-
-            document.getElementById('chart-taken-bar').style.width = `${takenPercent}%`;
-            document.getElementById('chart-missed-bar').style.width = `${missedPercent}%`;
-        }
-
-
-        // --- Reminder System ---
-
-        function checkReminders() {
-            const pills = getPills();
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
-            let remindersDue = [];
-            
-            // Check for doses due/overdue today
-            pills.forEach(pill => {
-                const dosesPerDay = pill.frequency;
-                
-                for (let i = 0; i < dosesPerDay; i++) {
-                    const doseTimeStr = calculateDoseTime(pill.time, dosesPerDay, i);
-                    
-                    const alreadyLoggedToday = (pill.log || []).some(log => 
-                        log.date === today && log.doseIndex === i
-                    );
-
-                    if (!alreadyLoggedToday) {
-                        remindersDue.push({ pill, doseIndex: i, dueTime: doseTimeStr });
-                    }
-                }
-            });
-            
-            const isDashboardActive = dashboard.classList.contains('active');
-
-            // Always re-render the list and chart when checking reminders
-            if (isDashboardActive && document.querySelector('.tab-button.active').dataset.tab === 'reminder') {
-                 renderReminderList();
-            }
-            if (isDashboardActive && document.querySelector('.tab-button.active').dataset.tab === 'chart') {
-                 renderChart();
-            }
-        }
-
-        function logDose(pillId, doseIndex, status) {
-            let pills = getPills();
-            const pillIndex = pills.findIndex(p => p.id === pillId);
-            
-            if (pillIndex === -1) return;
-
-            const now = new Date();
-            const pill = pills[pillIndex];
-
-            const logEntry = {
-                date: now.toISOString().split('T')[0],
-                doseIndex: doseIndex, 
-                status: status
-            };
-
-            if (!pill.log) pill.log = [];
-            
-            // Check if this dose has already been logged today (e.g., initially missed, then taken)
-            const existingLogIndex = pill.log.findIndex(log => log.date === logEntry.date && log.doseIndex === logEntry.doseIndex);
-            
-            if (existingLogIndex > -1) {
-                pill.log[existingLogIndex] = logEntry; // Overwrite the status
-            } else {
-                pill.log.push(logEntry); // Add new log
-            }
-
-            savePills(pills);
-            
-            // Re-render the current active tab
-            renderDashboardContent(document.querySelector('.tab-button.active').dataset.tab); 
-            checkReminders(); // Check for the next reminder
-        }
-
-        function renderReminderList() {
-            const pills = getPills();
-            const now = new Date();
-            const today = now.toISOString().split('T')[0];
-            const reminderListElement = document.getElementById('reminder-list');
-            let dueDoses = [];
-
-            pills.forEach(pill => {
-                const dosesPerDay = pill.frequency;
-                
-                for (let i = 0; i < dosesPerDay; i++) {
-                    const doseTimeStr = calculateDoseTime(pill.time, dosesPerDay, i);
-                    
-                    const alreadyLoggedToday = (pill.log || []).some(log => 
-                        log.date === today && log.doseIndex === i
-                    );
-                    
-                    if (!alreadyLoggedToday) {
-                        dueDoses.push({
-                            id: pill.id,
-                            name: pill.name,
-                            dosage: pill.dosage,
-                            doseIndex: i,
-                            dueTime: doseTimeStr
-                        });
-                    }
-                }
-            });
-
-            if (dueDoses.length === 0) {
-                reminderListElement.innerHTML = '<p>No doses remaining for today.</p>';
-                return;
-            }
-            
-            // Sort by due time
-            dueDoses.sort((a, b) => a.dueTime.localeCompare(b.dueTime));
-
-            reminderListElement.innerHTML = dueDoses.map(dose => `
-                <div class="pill-item" data-id="${dose.id}" data-dose-index="${dose.doseIndex}">
-                    <div class="pill-details">
-                        <strong>${dose.name} (Dose #${dose.doseIndex + 1})</strong>
-                        <span>Dosage: ${dose.dosage}</span>
-                        <span class="reminder-time">Due at: ${formatTime12h(dose.dueTime)}</span>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-primary btn-reminder-taken" data-id="${dose.id}" data-dose-index="${dose.doseIndex}">Taken</button>
-                        <button class="btn-secondary btn-reminder-missed" data-id="${dose.id}" data-dose-index="${dose.doseIndex}">Missed</button>
-                    </div>
-                </div>
-            `).join('');
-            
-            // Attach event listeners for the list buttons
-            reminderListElement.querySelectorAll('.btn-reminder-taken').forEach(button => {
-                button.addEventListener('click', (e) => logDose(e.target.dataset.id, parseInt(e.target.dataset.doseIndex), 'taken'));
-            });
-            reminderListElement.querySelectorAll('.btn-reminder-missed').forEach(button => {
-                button.addEventListener('click', (e) => logDose(e.target.dataset.id, parseInt(e.target.dataset.doseIndex), 'missed'));
-            });
-        }
-        
-        // --- Event Handlers ---
-        
-        editPillForm.addEventListener('submit', saveEditedPill);
-        cancelEditBtn.addEventListener('click', () => renderDashboardContent('details'));
-
-        // Event Listeners for switching views (Authentication logic remains simulated)
-        showSignupBtn.addEventListener('click', () => switchView('signup'));
-        showLoginBtn.addEventListener('click', () => switchView('login'));
-        showResetBtn.addEventListener('click', () => switchView('reset'));
-        showLoginFromResetBtn.addEventListener('click', () => switchView('login'));
-        logoutBtn.addEventListener('click', () => switchView('login'));
-        
-        // Login Submission
-        loginForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            loginError.textContent = '';
-            
-            const user = document.getElementById('login-user').value;
-            const pass = document.getElementById('login-password').value;
-
-            if (user === '' || pass === '') {
-                loginError.textContent = 'Please enter both username/email and password.';
-                return;
-            }
-            
-            if (pass.length < 4) {
-                loginError.textContent = 'Password must be at least 4 characters long.';
-                return;
-            }
-            
-            loginError.textContent = 'Attempting to sign in... (Simulated)';
-            setTimeout(() => {
-                loginError.textContent = ''; 
-                switchView('dashboard'); // SUCCESS: Move to Dashboard
-            }, 1000);
-        });
-
-        // Signup Submission
-        signupForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            signupError.textContent = '';
-            
-            const name = document.getElementById('signup-name').value.trim();
-            const username = document.getElementById('signup-username').value.trim();
-            const pass = document.getElementById('signup-password').value;
-            
-            if (name === '' || username === '' || pass === '' || pass.length < 4) { 
-                signupError.textContent = 'Please fill required fields (Name, Username) and ensure password is >= 4 chars.';
-                return;
-            }
-
-            signupError.textContent = `Creating account... (Simulated)`;
-            setTimeout(() => {
-                alert(`Account created for ${username}! Please sign in.`);
-                switchView('login');
-                signupError.textContent = ''; 
-            }, 1000);
-        });
-
-        // Password Reset Handler
-        resetForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            resetError.textContent = `Searching... (Simulated)`;
-            setTimeout(() => {
-                alert(`Password reset instructions sent.`);
-                switchView('login');
-                resetError.textContent = '';
-            }, 1500);
-        });
-        
-        // Initial setup
-        switchView('login');
-
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
