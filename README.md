@@ -51,8 +51,10 @@ A mystical-themed **medicine tracking web app** that helps users manage pills, t
 ## 📂 Project Structure
 
 ```
-project/
+triotech/
 │── index.html
+│── styles.css
+│── script.js
 │── README.md
 ```
 
