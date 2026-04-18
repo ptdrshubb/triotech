@@ -63,7 +63,7 @@ project/
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/ptdrshubb/triotech
+https://github.com/ptdrshubb/triotech
 ```
 
 ### 2️⃣ Open the project
