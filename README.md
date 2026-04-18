@@ -48,27 +48,6 @@ A mystical-themed **medicine tracking web app** that helps users manage pills, t
 
 ---
 
-## 📸 Screenshots
-
-> *(Add screenshots here after uploading images to your repo)*
-
-```md
-![Dashboard](./screenshots/dashboard.png)
-```
-
----
-
-## 🛠️ Tech Stack
-
-| Technology   | Usage                 |
-| ------------ | --------------------- |
-| HTML5        | Structure             |
-| CSS3         | Styling & Theme       |
-| JavaScript   | Logic & Interactivity |
-| LocalStorage | Data Persistence      |
-
----
-
 ## 📂 Project Structure
 
 ```
@@ -119,41 +98,3 @@ Just open `index.html` in your browser.
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome!
-
-1. Fork the repo
-2. Create a new branch
-3. Make your changes
-4. Submit a Pull Request
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
----
-
-## 🌟 Support
-
-If you like this project:
-
-⭐ Star the repository
-🍴 Fork it
-📢 Share it
-
----
-
-## 🧙 Theme Inspiration
-
-Inspired by:
-
-* Fantasy spellbooks
-* Alchemy
-* Medieval grimoires
-
----
-
-> *"Track your potions. Master your health."*
