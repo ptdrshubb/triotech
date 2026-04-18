@@ -63,7 +63,7 @@ project/
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/your-username/alchemist-grimoire.git
+git clone https://github.com/ptdrshubb/triotech
 ```
 
 ### 2️⃣ Open the project
